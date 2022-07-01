@@ -1,0 +1,114 @@
+---
+title: "Denison-Market-Analysis" 
+author: "Phineas Pham"
+date: "9/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(ggplot2)
+```
+
+## Introduction
+
+This survey and analysis is used to discover how big the role of Slayter is when it comes to main meal of day. It is indespensible that Slayter is one of the most common space students go for food and beverage. However, in terms of main meals (which is, on average, students have three main meals a day), besides Slayter, Huffman, Curtis, Granville restaurants, and self-made food are also students' go-to. After this survey, we hope to gain insight of students' preference. With the result, we may can help develop Slayter to become a better market in a customer's need-oriented way. The project is conducted with the help of Milo Dao and Minh Nguyen.
+
+
+## Research Questions
+
+Our main questions are: 
+
+1) What is the most number of average meals a day that students have at Slayter?
+
+2) On average, would students buy a drink when they have a meal at Slayter?
+
+3) Is there a significant disprecancy in the preference of the 4 main meals served at Slayter?
+
+With the answers from these questions, we can explore students' habit on purchasing meals at Slayter and investigate what Slayter can do to meet customers' demand. 
+
+## Data
+
+For the participants in the survey, we asked their gender, the number of main meal they have at Slayter, whether they decide to buy a drink when they buy the main meal, and their main preference at Slayter. We chose these variables because they provide necessary information that helps us analyze students' preference based on their gender, class year, the frequency and habit of purchasing their main meals at Slayter. We created a Google form so that participants can fill the survey easily. We then go around Slayter and some surrounding areas to ask for survey. We know that there would be not a bias in the survey if our main participants is at Slayter, as Slayter is the middle point in A-quad and students have a lot of purposes to go to Slayter for their main meal at the time of doing survey, combining the fact that we conduct survey from 3-4pm, which is not the common time that students have meal. Our data is tidy because each variable has its own column, each observation has its own row, and each value have its own cell. 
+
+Metadata:
+
+survey_response.csv
+
+gender: The gender of the participant. The data type is nominal. Missing value code: "na"
+
+class_year: The class year of the participants. It is integer data type, representing the year student graduate (example: value 25 represents students who will graduate in year 2025). Missing value code: 999
+
+avg_meal: The average of number of main meals a day students bought at Slayter. The data type is integer. Missing value code: -1 
+
+drink_with_meal.: The yes/no answer of the participants for the question whether they buy a drink if they bought a main meal at Slayter. It is a nominal data type. Missing value code: na
+
+preference: The main food that students interested in most among the main meals they have at Slayter. The data type is nominal. Missing value code: na
+
+
+## Summary of the data:
+```{r}
+data <- read.csv("slayter_survey.csv")
+summary(data)
+```
+
+## Ethical Statement
+
+When doing the survey, we took measurement on ethical standpoint to consider which variables we can ask and how we can approach students to fill our form. We made sure to ask for their permissions and create no hard feelings for them to fill the survey. Also, the information we ask for is ethically acceptable and our participants feel comfortable sharing that. The result might be affected if the participants are not honest about their answer, or they may be unconciously biased in the answer. For example, they may usually buy Deli but today there is a good, new pop-up food that they really enjoyed, so they may choose the answer for Pop-up instead of Deli.
+
+
+## Analysis
+
+
+Summary statistics:
+
+```{r}
+median(data$avg_meal)
+```
+The median of avg_meal shows that mostly, students only have 1 main meal a day at Slayter. 
+
+
+
+```{r}
+freshmen = data %>% 
+  filter(class_year == 24)
+not_freshmen = data %>% 
+  filter(class_year != 24)
+
+ggplot(freshmen, aes(preference, fill=preference) ) +
+  geom_bar(na.rm = FALSE, stat = "count", color="black", position = "dodge") +
+  labs(title = "The freshmen preference") +
+  theme(legend.position="top")
+
+ggplot(not_freshmen, aes(preference, fill=preference) ) +
+  geom_bar(na.rm = FALSE, stat = "count", color="black", position = "dodge") +
+  labs(title = "The upperclassmen preference") +
+  theme(legend.position="top")
+
+
+```
+
+Through the graphs, poke bowl is the option that has fewest choice. This can be explained based on the fact that it is rarest option in Slayter. Ignoring Poke bowl, the graphs also show that there is a big difference in the preference between freshmen and upperclassmen. While freshmen preference only focus on "Grill", upperclassmen have a more fair preference among other choices. This could be because the "Grill" station at Slayter is the biggest, which catch the eyes of most freshmen, but not to upperclassmen as they spend a longer time in Slayter. This situation could be improved if the dining hall reposition the food stalls in Slayter that freshmen can easily see more options.
+
+
+The count of students answering yes or no to buy drink while buying a main meal. We filter the observations that has 0 on average main meal a day bought at Slayter to only gets observations that buy at least 1 meal a day from Slayter
+```{r}
+have_meal <- data %>% 
+  filter(avg_meal != 0)
+ggplot(have_meal, aes(drink_with_meal., fill=drink_with_meal.) ) +
+  geom_bar(na.rm = FALSE, stat = "count", color="black", position = "dodge") +
+  labs(title = "Count of yes and no answers") +
+  theme(legend.position="top")
+
+```
+
+The graph shows that the counts of "no" and "yes" have little difference, while there count for "yes" is higher. Thus, the dining hall staff and re-distribute the number of drinks in the fridge so that the number of drinks match the number of meals they sold in the main meal time.
+
+
+## Conclusions:
+
+The analysis helps inform and give the answers for the three questions mentioned above and figure out where Slayter can change to become a better fit for student body. The graphs show some of the interesting fact like commonly students buy 1 main meal at Slayter, more than half of students who buy 1 or more meals at Slayter buy a drink too, and there is a clear discrepancy in the preference of the food options in freshmen. In a broader context, we have a small picture of the students preference and habit in terms of buying main meal in Slayter. Our team planned well on choosing the necessary variables that are really powerful for the analysis. However, there are still more variables that we have not taped to, like when they buy those main meal, so that we can identify the time that most student buy the meal at Slayter. In this way, we can also learn the traffic when students come to Slayter for breakfast, lunch, or dinner, and create a way that helps Slayter solve the traffic problem. If I would be asked to do again, I would plan out more powerful variables that can create stronger and more-indepth analysis.
+
+
